@@ -1,0 +1,55 @@
+/* https://wokwi.com/projects/417891121303383041 task2.dht22(simulation link)*/
+
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+#include <DHT.h>
+
+// Initialize the I2C LCD (address 0x27, 16 columns, 2 rows)
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+// Initialize the DHT sensor
+#define DHTPIN 2       // Data pin connected to Arduino Digital Pin 2
+#define DHTTYPE DHT22  // Define the sensor type (DHT11 or DHT22)
+DHT dht(DHTPIN, DHTTYPE);
+
+void setup() {
+    // Initialize LCD with dimensions
+    lcd.begin(16, 2);
+    lcd.backlight();
+    lcd.print("Initializing...");
+
+    // Initialize DHT sensor
+    dht.begin();
+
+    delay(2000); // Wait for components to initialize
+    lcd.clear();
+}
+
+void loop() {
+    // Read temperature and humidity from DHT sensor
+    float temperature = dht.readTemperature();
+    float humidity = dht.readHumidity();
+
+    // Check for sensor errors
+    if (isnan(temperature) || isnan(humidity)) {
+        lcd.setCursor(0, 0);
+        lcd.print("Sensor Error!");
+        delay(2000);
+        return;
+    }
+
+    // Display temperature and humidity on LCD
+    lcd.setCursor(0, 0); // First row
+    lcd.print("Temp: ");
+    lcd.print(temperature);
+    lcd.print(" C");
+
+    lcd.setCursor(0, 1); // Second row
+    lcd.print("Humidity: ");
+    lcd.print(humidity);
+    lcd.print(" %");
+
+    delay(2000); // Update every 2 seconds
+}
+
+
